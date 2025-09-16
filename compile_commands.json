@@ -13,9 +13,9 @@
       "build/obj/app/dis.o",
       "src/dis.c"
     ],
-    "directory": "/home/sean-desktop/Projects/rda",
-    "file": "/home/sean-desktop/Projects/rda/src/dis.c",
-    "output": "/home/sean-desktop/Projects/rda/build/obj/app/dis.o"
+    "directory": "/home/sean/Desktop/rda",
+    "file": "/home/sean/Desktop/rda/src/dis.c",
+    "output": "/home/sean/Desktop/rda/build/obj/app/dis.o"
   },
   {
     "arguments": [
@@ -31,9 +31,9 @@
       "build/obj/app/main.o",
       "src/main.c"
     ],
-    "directory": "/home/sean-desktop/Projects/rda",
-    "file": "/home/sean-desktop/Projects/rda/src/main.c",
-    "output": "/home/sean-desktop/Projects/rda/build/obj/app/main.o"
+    "directory": "/home/sean/Desktop/rda",
+    "file": "/home/sean/Desktop/rda/src/main.c",
+    "output": "/home/sean/Desktop/rda/build/obj/app/main.o"
   },
   {
     "arguments": [
@@ -49,9 +49,9 @@
       "build/obj/app/dynl.o",
       "src/dynl.c"
     ],
-    "directory": "/home/sean-desktop/Projects/rda",
-    "file": "/home/sean-desktop/Projects/rda/src/dynl.c",
-    "output": "/home/sean-desktop/Projects/rda/build/obj/app/dynl.o"
+    "directory": "/home/sean/Desktop/rda",
+    "file": "/home/sean/Desktop/rda/src/dynl.c",
+    "output": "/home/sean/Desktop/rda/build/obj/app/dynl.o"
   },
   {
     "arguments": [
@@ -67,8 +67,8 @@
       "build/obj/app/rda.o",
       "src/rda.c"
     ],
-    "directory": "/home/sean-desktop/Projects/rda",
-    "file": "/home/sean-desktop/Projects/rda/src/rda.c",
-    "output": "/home/sean-desktop/Projects/rda/build/obj/app/rda.o"
+    "directory": "/home/sean/Desktop/rda",
+    "file": "/home/sean/Desktop/rda/src/rda.c",
+    "output": "/home/sean/Desktop/rda/build/obj/app/rda.o"
   }
 ]
