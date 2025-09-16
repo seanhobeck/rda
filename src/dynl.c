@@ -15,6 +15,9 @@
 /*! @uses assert */
 #include <assert.h>
 
+/*! @uses memcpy */
+#include <string.h>
+
 /**
  * @brief create a _int_dynl_t structure with a set item size.
  *
@@ -93,14 +96,27 @@ _int_dynl_pop(_int_dynl_t* list, size_t index) {
 
     // capture the element
     void* item = calloc(1u, list->isize);
-    // free, shift down and then decrement length.
+    memcpy(item, list->data[index], list->isize);
+    free(list->data[index]);
 
-    return 0x0;
+    // free, shift down and then decrement length.
+    for (size_t i = index + 1; i < list->length; i++)
+        list->data[i - 1] = list->data[i];
+    list->length--;
+    return item;
 };
 
 /** @brief shrinks the list to the length via realloc. */
 void
 _int_dynl_shrink(_int_dynl_t* list) {
+    // assert if the list == 0x0.
+    assert(list != 0x0);
+
     // do a realloc down where capacity = length.
-    return;
+    void** _data = realloc(list->data, list->isize * list->length);
+    if (!_data) {
+        fprintf(stderr, "realloc failed; could not allocate memory for list.");
+        exit(EXIT_FAILURE);
+    }
+    list->data = _data;
 };
