@@ -1,0 +1,74 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-g",
+      "-O0",
+      "-Wall",
+      "-Wextra",
+      "-std=c17",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/obj/app/dis.o",
+      "src/dis.c"
+    ],
+    "directory": "/home/sean-desktop/Projects/rda",
+    "file": "/home/sean-desktop/Projects/rda/src/dis.c",
+    "output": "/home/sean-desktop/Projects/rda/build/obj/app/dis.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-g",
+      "-O0",
+      "-Wall",
+      "-Wextra",
+      "-std=c17",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/obj/app/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/sean-desktop/Projects/rda",
+    "file": "/home/sean-desktop/Projects/rda/src/main.c",
+    "output": "/home/sean-desktop/Projects/rda/build/obj/app/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-g",
+      "-O0",
+      "-Wall",
+      "-Wextra",
+      "-std=c17",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/obj/app/dynl.o",
+      "src/dynl.c"
+    ],
+    "directory": "/home/sean-desktop/Projects/rda",
+    "file": "/home/sean-desktop/Projects/rda/src/dynl.c",
+    "output": "/home/sean-desktop/Projects/rda/build/obj/app/dynl.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-g",
+      "-O0",
+      "-Wall",
+      "-Wextra",
+      "-std=c17",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/obj/app/rda.o",
+      "src/rda.c"
+    ],
+    "directory": "/home/sean-desktop/Projects/rda",
+    "file": "/home/sean-desktop/Projects/rda/src/rda.c",
+    "output": "/home/sean-desktop/Projects/rda/build/obj/app/rda.o"
+  }
+]
