@@ -70,7 +70,7 @@ _int_dynl_push(_int_dynl_t* list, void* data) {
         size_t _capacity = list->capacity == 0 ? 16 : list->capacity * 2;
         void** _data = realloc(list->data, list->isize * _capacity);
         if (!_data) {
-            fprintf(stderr, "realloc failed; could not allocate memory for list.");
+            fprintf(stderr, "realloc failed; could not allocate memory for push.");
             exit(EXIT_FAILURE);
         }
         list->data = _data;
@@ -115,7 +115,7 @@ _int_dynl_shrink(_int_dynl_t* list) {
     // do a realloc down where capacity = length.
     void** _data = realloc(list->data, list->isize * list->length);
     if (!_data) {
-        fprintf(stderr, "realloc failed; could not allocate memory for list.");
+        fprintf(stderr, "realloc failed; could not allocate memory for shrink.");
         exit(EXIT_FAILURE);
     }
     list->data = _data;
