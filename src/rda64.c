@@ -212,7 +212,7 @@ rda_decode_single_amd64(const unsigned char* bytes, size_t size) {
     // special handling for 0xf3 prefix vs. endbr32/64 instructions,
     size_t prefix_length = 0;
     unsigned char rex = 0;
-    if (bytes[0] == 0xF3 && !is_f3_prefix_context(bytes, size)) {
+    if (bytes[0] == 0xf3 && !is_f3_prefix_context(bytes, size)) {
         // this 0xf3 is part of endbr32/64, NOT a prefix.
         prefix_length = 0;
     } else {
