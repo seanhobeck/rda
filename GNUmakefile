@@ -14,8 +14,8 @@ APP_EXCLUDE := src/entry.c
 APP_SRCS := $(filter-out $(APP_EXCLUDE), $(SRCS_ALL))
 APP_OBJS := $(patsubst src/%.c, build/obj/app/%.o, $(APP_SRCS))
 
-# libs: include entry.c, exclude main.c
-LIB_EXCLUDE := src/main.c
+# libs: include entry.c, exclude tmain.c
+LIB_EXCLUDE := src/tmain.c
 LIB_SRCS := $(filter-out $(LIB_EXCLUDE), $(SRCS_ALL))
 LIB_OBJS := $(patsubst src/%.c, build/obj/lib/%.o, $(LIB_SRCS))
 
@@ -25,7 +25,7 @@ LIBDIR := build/lib
 SHLIB := $(LIBDIR)/librda.so
 STLIB := $(LIBDIR)/librda.a
 
-# default target (build app; main.c included, entry.c excluded)
+# default target (build app; tmain.c included, entry.c excluded)
 all: $(TARGET)
 
 # application build.

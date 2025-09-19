@@ -1,18 +1,16 @@
 /**
- *
  *	@author Sean Hobeck
- *	@date 15/09/2025
+ *	@date 18/09/2025
  *
+ *	@file lib.h
  */
-#ifndef LRDA_H
-#define LRDA_H
+#ifndef LRDA_LIB_H
+#define LRDA_LIB_H
 
 /// @note a structure specific to the context provided to librda.
 typedef struct {
 	// whether to print to stdout or not (1 to print, 0 to not).
 	int verbose:1;
-	// if unrecognized opcodes should also be listed (1 if not, 0 if they should).
-	int ignore_uopc:1;
 } rda_context_t;
 
 /// @note static context for librda.
@@ -27,4 +25,11 @@ static rda_context_t g_ctx;
  */
 void
 rda_begin(rda_context_t *ctx);
+
+/*!
+ * @note all internal functions are labeled with this, the attribute
+ *	essentially tells gcc to not allow other shared objects/.so to
+ *	link against this function at all.
+ */
+#define rda_internal __attribute__((visibility("internal")))
 #endif //LRDA_H

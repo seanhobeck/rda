@@ -1,8 +1,6 @@
 /**
- *
  *	@author Sean Hobeck
- *	@date 16/09/2025
- *
+ *	@date 18/09/2025
  */
 #include "dynl.h"
 
@@ -19,18 +17,18 @@
 #include <string.h>
 
 /**
- * @brief create a _int_dynl_t structure with a set item size.
+ * @brief create a rda_dynl_t structure with a set item size.
  *
  * @param isize item size.
  * @return an allocated dynamic list.
  */
-_int_dynl_t*
-_int_dynl_create(const size_t isize) {
+rda_dynl_t*
+rda_dynl_create(const size_t isize) {
     // assert if the isize == 0.
     assert(isize != 0);
 
     // allocate the list and set all data to be 0, except for isize.
-    _int_dynl_t* list = calloc(1, sizeof *list);
+    rda_dynl_t* list = calloc(1, sizeof *list);
     list->data = 0x0;
     list->length = 0;
     list->capacity = 0;
@@ -44,7 +42,7 @@ _int_dynl_create(const size_t isize) {
  * @param list pointer to a dynamically allocated list.
  */
 void
-_int_dynl_destroy(_int_dynl_t* list) {
+rda_dynl_destroy(rda_dynl_t* list) {
     // assert if the list is 0x0.
     assert(list != 0x0);
 
@@ -61,7 +59,7 @@ _int_dynl_destroy(_int_dynl_t* list) {
  * @param data data to be pushed onto the top of the allocated list.
  */
 void
-_int_dynl_push(_int_dynl_t* list, void* data) {
+rda_dynl_push(rda_dynl_t* list, void* data) {
     // assert if the list or data == 0x0.
     assert(list != 0x0 && data != 0x0);
 
@@ -82,17 +80,18 @@ _int_dynl_push(_int_dynl_t* list, void* data) {
  * @brief pop data out of a dynamically allocated list,
  *  while also making sure to shift down / coalesce the memory.
  *  this function does not SHRINK the allocated memory, see
- *  @ref<_int_dynl_shrink>[("_int_dynl_shrink")].
+ *  @ref rda_dynl_shrink().
  *
  * @param list pointer to a dynamically allocated list.
  * @param index index at which to pop the item.
  * @return data at <index>, popped off the list.
  */
 void*
-_int_dynl_pop(_int_dynl_t* list, size_t index) {
-    // assert if the list == 0x0 or index > list->length.
+rda_dynl_pop(rda_dynl_t* list, size_t index) {
+    // assert if the list == 0x0.
     assert(list != 0x0);
-    assert(list->length >= index);
+    if (index >= list->length)
+        return 0x0;
 
     // capture the element
     void* item = calloc(1u, list->isize);
@@ -106,9 +105,32 @@ _int_dynl_pop(_int_dynl_t* list, size_t index) {
     return item;
 };
 
-/** @brief shrinks the list to the length via realloc. */
+/**
+ * @brief get the data at the index specified from a dynamically
+ *  allocated list.
+ *
+ * @param list the dynamically allocated list to get information from.
+ * @param index the index in <list> that we are to retrieve data from.
+ * @return 0x0 if the index is out of bounds or the data at <index> in <list>.
+ */
+void*
+rda_dynl_get(rda_dynl_t* list, size_t index) {
+    // assert if the list == 0x0
+    assert(list != 0x0);
+
+    // if the index is out of bounds.
+    if (index >= list->length)
+        return 0x0;
+    return list->data[index];
+};
+
+/**
+ * @brief shrinks the list to the length via realloc.
+ *
+ * @param list the dynamically allocated list to be shrinked.
+ */
 void
-_int_dynl_shrink(_int_dynl_t* list) {
+rda_dynl_shrink(rda_dynl_t* list) {
     // assert if the list == 0x0.
     assert(list != 0x0);
 

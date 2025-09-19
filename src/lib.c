@@ -1,10 +1,10 @@
 /**
- *
  *	@author Sean Hobeck
- *	@date 15/09/2025
+ *	@date 18/09/2025
  *
+ *	@file lib.c
  */
-#include "rda.h"
+#include "lib.h"
 
 /**
  * @brief begin providing context to librda.
@@ -19,7 +19,6 @@ rda_begin(rda_context_t *ctx) {
         // set to default values.
         g_ctx = (rda_context_t) {
             .verbose = 0,
-            .ignore_uopc = 0
         };
         return;
     };
