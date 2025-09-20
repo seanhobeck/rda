@@ -261,3 +261,47 @@ rda_get_type(const rda_int_amd64_t* inst) {
     if (!inst) return RDA_ASMX64_INVALID;
     return inst->instruction.type;
 };
+
+/**
+ * @brief disassemble a function in memory at <address>.
+ *
+ * @param address the address in memory to start reading from.
+ * @return a pointer to an allocated structure containing the information
+ *  about the disassembled function in amd64.
+ */
+rda_fun_amd64_t*
+rda_disassemble_amd64(void* address) {
+    // allocate the structure.
+    rda_fun_amd64_t* function = calloc(1u, sizeof *function);
+    function->address = (size_t) address;
+    function->ilist = rda_dynl_create(sizeof(rda_int_amd64_t));
+
+    // we then iterate.
+    size_t offset = 0;
+    unsigned char* bytes = address;
+    while (1) {
+        // decode instruction at current offset
+        rda_int_amd64_t* inst = rda_decode_single_amd64(bytes + offset, 15);
+        if (!inst) break; // decoder failed badly
+
+        // add to function instruction list
+        rda_dynl_push(function->ilist, inst);
+
+        // inc offset
+        offset += inst->length;
+
+        // invalid instruction, break.
+        if (!inst->valid)
+            break;
+
+        // is this a return instruction???
+        if (inst->instruction.type == RDA_ASMX64_CONTROL && \
+            strncmp(inst->instruction.mnemonic, "ret", 3) == 0)
+            break;
+    }
+
+    // record total size of bytes consumed
+    function->bytes = calloc(1u, offset);
+    memcpy(function->bytes, bytes, offset);
+    return function;
+};

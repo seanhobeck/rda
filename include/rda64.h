@@ -16,7 +16,10 @@
 /*! @uses amd64_prefixes_t, amd64_int_t. */
 #include "asmx64.h"
 
-// @note a structure for a simplified, decompiled instruction in amd64.
+/*! @uses rda_dynl_t */
+#include "dynl.h"
+
+// @note a structure for a simplified, decompiled instruction in amd64/x86_64.
 typedef struct {
     amd64_int_t instruction;        // instruction information, see amd64.h
     const unsigned char* bytes;     // raw bytes read from memory.
@@ -45,9 +48,25 @@ rda_decode_single_amd64(const unsigned char* bytes, size_t size);
 amd64_int_type_t
 rda_get_type(const rda_int_amd64_t* inst);
 
-/// TODO: add rda_fun_amd64_t for function analysis containing a rda_dynl_t of
-///     instructions within the function.
-///
+
 /// FUTURE: perhaps we start adding support for x87 fpu, sse (not 2), avx512?
-///     finish most of amd64/x86_64 and then move onto arm64 (if i have the will power).
+///     finish most of amd64/x86_64 and then move onto arm64.
+
+
+// @note a structure for a simplified, disassembled function in amd64/x86_64.
+typedef struct {
+    rda_dynl_t* ilist; // a list of decoded instructions in a function.
+    unsigned char* bytes; // the actual bytes processed (trimmed).
+    size_t address, length; // the address (unsigned long) and the length of bytes processed.
+} rda_fun_amd64_t;
+
+/**
+ * @brief disassemble a function in memory at <address>.
+ *
+ * @param address the address in memory to start reading from.
+ * @return a pointer to an allocated structure containing the information
+ *  about the disassembled function in amd64.
+ */
+rda_fun_amd64_t*
+rda_disassemble_amd64(void* address);
 #endif //LRDA64_H

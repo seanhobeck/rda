@@ -53,8 +53,8 @@ typedef struct {
 	unsigned char bytes[4];			// 4 starting bytes.
 	int opcode_length, instruction_length, opcode_size, modrm; // opcode/immediate length, opcode size, and the modr/m byte.
 	int plus_reg, modrm_reg;		// +1 if using modr/m or +rd encoding respectively.
-	amd64_prefixes_t prefixes;		// prefixes for the instruction.
 	amd64_int_type_t type;			// type of the instruction.
+	amd64_prefixes_t prefixes;		// prefixes for the instruction.
 } amd64_int_t;
 
 /**

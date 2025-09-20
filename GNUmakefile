@@ -1,6 +1,6 @@
 # compiler and compiler flags
 CC := gcc
-CFLAGS := -g -O0 -Wall -Wextra -std=c17
+CFLAGS := -g -O0 -std=c17
 CFLAGS += -Iinclude
 
 # derive include directories (-I) from header locations in src/
