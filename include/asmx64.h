@@ -99,21 +99,21 @@ static const rda_int_t internal_table[] = {
 
 	// +rd only on imm64 because we want to compare rex.w prefix as well.
 	{"mov rax, imm64",  {0x48, 0xb8}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov eax, imm32",  {0xb8}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov eax, imm32",  {0xb8}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // these are +rd, but we just want to do memcmp
 	{"mov rcx, imm64",  {0x48, 0xb9}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov ecx, imm32",  {0xb9}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov ecx, imm32",  {0xb9}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 	{"mov rdx, imm64",  {0x48, 0xba}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov edx, imm32",  {0xba}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov edx, imm32",  {0xba}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 	{"mov rbx, imm64",  {0x48, 0xbb}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov ebx, imm32",  {0xbb}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov ebx, imm32",  {0xbb}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 	{"mov rsp, imm64",  {0x48, 0xbc}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov esp, imm32",  {0xbc}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov esp, imm32",  {0xbc}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 	{"mov rbp, imm64",  {0x48, 0xbd}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov ebp, imm32",  {0xbd}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov ebp, imm32",  {0xbd}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 	{"mov rsi, imm64",  {0x48, 0xbe}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov esi, imm32",  {0xbe}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov esi, imm32",  {0xbe}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 	{"mov rdi, imm64",  {0x48, 0xbf}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
-	{"mov edi, imm32",  {0xbf}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov edi, imm32",  {0xbf}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA}, // ^
 
     // push/pop ops.
     {"push r64",		{0x50}, 1, 0, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd

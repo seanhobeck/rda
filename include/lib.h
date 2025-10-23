@@ -1,6 +1,6 @@
 /**
  *	@author Sean Hobeck
- *	@date 18/09/2025
+ *	@date 23/10/2025
  *
  *	@file lib.h
  */
@@ -42,4 +42,4 @@ rda_get_context();
  *	link against this function at all.
  */
 #define rda_internal __attribute__((visibility("internal")))
-#endif //LRDA_H
+#endif //LRDA_LIB_H

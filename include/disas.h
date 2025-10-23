@@ -2,10 +2,10 @@
  *	@author Sean Hobeck
  *	@date 23/10/2025
  *
- *	@file rda64.h
+ *	@file disas.h
  */
-#ifndef LRDA64_H
-#define LRDA64_H
+#ifndef LRDA_DISAS_H
+#define LRDA_DISAS_H
 
 /*! @uses size_t */
 #include <stddef.h>
@@ -74,4 +74,4 @@ rda_disassemble64(void* address);
  */
 rda_dec_int_t*
 rda_get_instruction_at(rda_dec_fun_t* function, size_t index);
-#endif //LRDA64_H
+#endif //LRDA_DISAS_H
