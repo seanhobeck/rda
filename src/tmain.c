@@ -43,6 +43,12 @@ double example_regular_floating_point2(double a, float b) {
 	return a*a + b/ 7.2;
 }
 
+int other_function(int x, size_t z) {
+	size_t y = z*z + x;
+	printf("%zu\n", y+111);
+	return (int)(y % 7);
+}
+
 // entry point for testing.
 int main(int argc, char** argv) {
 	rda_context_t ctx = (rda_context_t) {
@@ -52,17 +58,23 @@ int main(int argc, char** argv) {
 	rda_begin(ctx);
 
 	// disassemble some example functions.
-	rda_dec_fun_t* function = rda_disassemble64(&some_function);
+	rda_dec_fun_t* function = rda_disassemble64(&other_function);
 	for (size_t i = 0; i < function->list->length; i++) {
-		printf("%s\n", ((rda_dec_int_t*)rda_dynl_get(function->list, i))->instruction.mnemonic);
+		printf("%s\n", rda_get_instruction_at(function, i)->instruction.mnemonic);
+	}
+
+	puts("\n\n");
+	function = rda_disassemble64(&rda_dynl_create);
+	for (size_t i = 0; i < function->list->length; i++) {
+		printf("%s\n", rda_get_instruction_at(function, i)->instruction.mnemonic);
 	}
 
 	// disassemble example_sse2.
-	printf("\n\n");
-	function = rda_disassemble64(&example_sse2);
-	for (size_t i = 0; i < function->list->length; i++) {
-		printf("%s\n", ((rda_dec_int_t*)rda_dynl_get(function->list, i))->instruction.mnemonic);
-	}
+	// printf("\n\n");
+	// function = rda_disassemble64(&example_sse2);
+	// for (size_t i = 0; i < function->list->length; i++) {
+	// 	printf("%s\n", ((rda_dec_int_t*)rda_dynl_get(function->list, i))->instruction.mnemonic);
+	// }
 
 	// // disassemble example_avx512.
 	// printf("\n\n");

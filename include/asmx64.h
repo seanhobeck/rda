@@ -83,21 +83,37 @@ typedef struct __attribute__((packed)) {
  *	of ~260 entries with a loop.
  */
 static const rda_int_t internal_table[] = {
-    // mov/load ops.
-    {"mov r/m8, r8",		{0x88}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"mov r/m16-64, r16-64",{0x89}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"mov r8, r/m8",		{0x8a}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"mov r16-64, r/m16-64",{0x8b}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"mov r64, imm64",		{0xb8}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd encodings
-    {"mov r32, imm32",		{0xb8}, 1, 4, 32, 0, 1, -1, RDA_INST_TY_DATA}, // +rd encodings
-    {"mov r/m16-64, imm16",	{0xc7}, 1, -1, 0, 1, 0, 0, RDA_INST_TY_DATA}, // /0
-    {"mov r/m8, imm8",		{0xc6}, 1, 1, 8, 1, 0, 0, RDA_INST_TY_DATA}, // /0
-    {"lea r16-64, m",		{0x8d}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"movzx r16-64, r/m8",  {0x0f,0xb6}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"movzx r32-64, r/m16", {0x0f,0xb7}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"movsx r16-64, r/m8",  {0x0f,0xbe}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"movsx r32-64, r/m16", {0x0f,0xbf}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
-    {"movsxd r64, r/m32",   {0x63}, 1, 0, 64, 1, 0, -1, RDA_INST_TY_DATA},
+	// mov/load ops.
+	{"mov r/m8, r8",		{0x88}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"mov r/m16-64, r16-64",{0x89}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"mov r8, r/m8",		{0x8a}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"mov r16-64, r/m16-64",{0x8b}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"mov r/m16-64, imm16",	{0xc7}, 1, -1, 0, 1, 0, 0, RDA_INST_TY_DATA}, // /0
+	{"mov r/m8, imm8",		{0xc6}, 1, 1, 8, 1, 0, 0, RDA_INST_TY_DATA}, // /0
+	{"lea r16-64, m16-64",	{0x8d}, 1, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"movzx r16-64, r/m8",  {0x0f,0xb6}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"movzx r32-64, r/m16", {0x0f,0xb7}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"movsx r16-64, r/m8",  {0x0f,0xbe}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"movsx r32-64, r/m16", {0x0f,0xbf}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
+	{"movsxd r64, r/m32",   {0x63}, 1, 0, 64, 1, 0, -1, RDA_INST_TY_DATA},
+
+	// +rd only on imm64 because we want to compare rex.w prefix as well.
+	{"mov rax, imm64",  {0x48, 0xb8}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov eax, imm32",  {0xb8}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rcx, imm64",  {0x48, 0xb9}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov ecx, imm32",  {0xb9}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rdx, imm64",  {0x48, 0xba}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov edx, imm32",  {0xba}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rbx, imm64",  {0x48, 0xbb}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov ebx, imm32",  {0xbb}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rsp, imm64",  {0x48, 0xbc}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov esp, imm32",  {0xbc}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rbp, imm64",  {0x48, 0xbd}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov ebp, imm32",  {0xbd}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rsi, imm64",  {0x48, 0xbe}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov esi, imm32",  {0xbe}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
+	{"mov rdi, imm64",  {0x48, 0xbf}, 1, 8, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
+	{"mov edi, imm32",  {0xbf}, 1, 4, 32, 0, 0, -1, RDA_INST_TY_DATA},
 
     // push/pop ops.
     {"push r64",		{0x50}, 1, 0, 64, 0, 1, -1, RDA_INST_TY_DATA}, // +rd
@@ -393,11 +409,12 @@ static const rda_int_t internal_table[] = {
     {"lss r16-64, m16:16-32",	{0x0f,0xb2}, 2, 0, 0, 1, 0, -1, RDA_INST_TY_DATA},
 
     // additional common instructions
-    {"cwde",	{0x98}, 1, 0, 32, 0, 0, -1, RDA_INST_TY_ARITH},
-    {"cdqe",	{0x98}, 1, 0, 64, 0, 0, -1, RDA_INST_TY_ARITH},
-    {"cwd",		{0x99}, 1, 0, 16, 0, 0, -1, RDA_INST_TY_ARITH},
-    {"cdq",		{0x99}, 1, 0, 32, 0, 0, -1, RDA_INST_TY_ARITH},
-    {"cqo",		{0x99}, 1, 0, 64, 0, 0, -1, RDA_INST_TY_ARITH},
+    {"cltq",	{0x98}, 1, 0, 32, 0, 0, -1, RDA_INST_TY_DATA}, // conv. word -> dword
+    {"cdqe",	{0x98}, 1, 0, 64, 0, 0, -1, RDA_INST_TY_DATA}, // conv. dword -> qword
+	{"cbw",		{0x98}, 1, 0, 16, 0, 0, -1, RDA_INST_TY_DATA}, // conv. byte -> word
+    {"cwd",		{0x99}, 1, 0, 16, 0, 0, -1, RDA_INST_TY_DATA},
+    {"cdq",		{0x99}, 1, 0, 32, 0, 0, -1, RDA_INST_TY_DATA},
+    {"cqo",		{0x99}, 1, 0, 64, 0, 0, -1, RDA_INST_TY_DATA},
     {"xlat",	{0xd7}, 1, 0, 0, 0, 0, -1, RDA_INST_TY_DATA},
     {"wait",	{0x9b}, 1, 0, 0, 0, 0, -1, RDA_INST_TY_MISC}, // technically x87 fpu ? not sure if we will move this or not yet.
     {"fwait",	{0x9b}, 1, 0, 0, 0, 0, -1, RDA_INST_TY_MISC},

@@ -64,4 +64,14 @@ typedef struct {
  */
 rda_dec_fun_t*
 rda_disassemble64(void* address);
+
+/**
+ * @brief get the instruction at index within a function.
+ *
+ * @param function a decoded function from memory.
+ * @param index the index within the list of instructions.
+ * @return instruction within the function at <index> or 0x0 if not found.
+ */
+rda_dec_int_t*
+rda_get_instruction_at(rda_dec_fun_t* function, size_t index);
 #endif //LRDA64_H

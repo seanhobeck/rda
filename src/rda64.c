@@ -141,7 +141,15 @@ match_and_calc_length(const unsigned char* bytes, size_t available,
     if (inst->plus_reg) {
         // +rd encoding - mask lower 3 bits of last opcode byte
         if (inst->opcode_length == 1) {
-            if ((byte_ptr[0] & 0xf8) != (inst->bytes[0] & 0xf8)) return -1;
+            // if rex.w
+            if (prefix_len == 1 && inst->opcode_size == 64) {
+                if (bytes[0] != 0x48)
+                    return -1;
+                if (bytes[1] != inst->bytes[1])
+                    return -1;
+            }
+            else if ((byte_ptr[0] & 0xf8) != (inst->bytes[0] & 0xf8))
+                return -1;
         }
         else {
             if (memcmp(byte_ptr, inst->bytes, inst->opcode_length - 1) != 0) return -1;
@@ -307,7 +315,7 @@ rda_disassemble64(void* address) {
         rda_dec_int_t* inst = rda_decode_single64(bytes + offset, 15);
         if (!inst) break; // decoder failed badly
 
-        // add to function instruction list
+        // add to a function instruction list.
         rda_dynl_push(function->list, inst);
 
         // inc offset
@@ -317,7 +325,7 @@ rda_disassemble64(void* address) {
         if (!inst->valid)
             break;
 
-        // is this a return instruction???
+        // is this a return instruction?
         if (inst->instruction.type == RDA_INST_TY_CONTROL && \
             strncmp(inst->instruction.mnemonic, "ret", 3) == 0)
             break;
@@ -327,4 +335,16 @@ rda_disassemble64(void* address) {
     function->bytes = calloc(1u, offset);
     memcpy(function->bytes, bytes, offset);
     return function;
+};
+
+/**
+ * @brief get the instruction at index within a function.
+ *
+ * @param function a decoded function from memory.
+ * @param index the index within the list of instructions.
+ * @return instruction within the function at <index> or 0x0 if not found.
+ */
+rda_dec_int_t*
+rda_get_instruction_at(rda_dec_fun_t* function, size_t index) {
+    return rda_dynl_get(function->list, index);
 };
