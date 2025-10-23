@@ -7,14 +7,16 @@
 #ifndef LRDA_LIB_H
 #define LRDA_LIB_H
 
+/*! @uses bool, true, false */
+#include <stdbool.h>
+
 /// @note a structure specific to the context provided to librda.
 typedef struct {
-	// whether to print to stdout or not (1 to print, 0 to not).
-	int verbose:1;
+	// whether to print to stdout or not.
+	bool verbose;
+	// whether to use simd instructions in decoding.
+	bool use_simd;
 } rda_context_t;
-
-/// @note static context for librda.
-static rda_context_t g_ctx;
 
 /**
  * @brief begin providing context to librda.
@@ -24,7 +26,15 @@ static rda_context_t g_ctx;
  *	options in rda_context_t).
  */
 void
-rda_begin(rda_context_t *ctx);
+rda_begin(rda_context_t ctx);
+
+/**
+ * @brief get the current context used by librda.
+ *
+ * @return the current context used by librda.
+ */
+rda_context_t
+rda_get_context();
 
 /*!
  * @note all internal functions are labeled with this, the attribute

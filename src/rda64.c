@@ -1,6 +1,6 @@
 /**
  *	@author Sean Hobeck
- *	@date 19/09/2025
+ *	@date 23/10/2025
  *
  *	@file rda64.c
  */
@@ -15,13 +15,16 @@
 /*! @uses rda_internal */
 #include "lib.h"
 
+/*! @uses internal_simd_table */
+#include "simdx64.h"
+
 /**
- * @brief parse the prefixes in <code>, max of 5 prefixes.
+ * @brief parse the prefixes with a max of 5 prefixes.
  *
  * @param bytes the bytes to be parsed for any prefixes.
- * @param size the count of <bytes>.
- * @param rex_ptr pointer to a rexw prefix in a instruction.
- * @return a prefix count in <code>.
+ * @param size the count of <bytes> (at least 1).
+ * @param rex_ptr pointer to a rexw prefix in an instruction.
+ * @return a prefix count in <code> (minimum 0).
  */
 rda_internal size_t
 parse_prefixes(const unsigned char* bytes, size_t size, unsigned char* rex_ptr) {
@@ -34,7 +37,7 @@ parse_prefixes(const unsigned char* bytes, size_t size, unsigned char* rex_ptr) 
         // read the byte at the prefix_count index, and then compare it
         //  with the table to see if it returns a prefix_type of != 0.
         unsigned char byte = bytes[prefix_count];
-        unsigned char prefix_type = internal_m64_prefix_table[byte];
+        unsigned char prefix_type = internal_prefix_table[byte];
 
         // not a prefix
         if (prefix_type == 0)
@@ -54,11 +57,11 @@ parse_prefixes(const unsigned char* bytes, size_t size, unsigned char* rex_ptr) 
 };
 
 /**
- * @brief check if the 4 bytes provided are actually an f3 prefix,
+ * @brief check if the 4 bytes provided are actually a f3 prefix,
  *  and not something like endbr32/64.
  *
  * @param bytes the bytes to be checked for an actual f3 prefix.
- * @param size the count of <bytes>.
+ * @param size the count of <bytes> (at least 1).
  * @return 1 if the f3 is a prefix, 0 if it is endbr32/64.
  */
 rda_internal size_t
@@ -117,7 +120,7 @@ get_modrm_length(unsigned char modrm) {
 };
 
 /**
- * @brief match, compare, and calculate the bytes to the amd64_instruction,
+ * @brief match, compare, and calculate the bytes for the rda_int_t instruction,
  *  returning the length if they match, and -1 otherwise.
  *
  * @param bytes the bytes to be matched.
@@ -128,7 +131,7 @@ get_modrm_length(unsigned char modrm) {
  */
 rda_internal int
 match_and_calc_length(const unsigned char* bytes, size_t available,
-    const amd64_int_t* inst, size_t prefix_len) {
+    const rda_int_t* inst, size_t prefix_len) {
     // grabbing a pointer to the current byte from the code + prefix_len.
     const unsigned char* byte_ptr = bytes + prefix_len;
     size_t remaining = available - prefix_len;
@@ -167,7 +170,7 @@ match_and_calc_length(const unsigned char* bytes, size_t available,
             if (reg != inst->modrm_reg) return -1;
         }
 
-        // calculate the modrm length and if it is more than we have
+        // calculate the modrm length, and if it is more than we have
         //  available, then we simply return -1.
         size_t modrm_len = get_modrm_length(modrm);
         if (length + modrm_len > available) return -1;
@@ -193,17 +196,17 @@ match_and_calc_length(const unsigned char* bytes, size_t available,
 };
 
 /**
- * @brief decode a single instruction in memory at <bytes>.
+ * @brief decode a single instruction in memory.
  *
  * @param bytes the bytes in memory to be decoded.
  * @param size the size of <bytes> (at the most 4).
  * @return a pointer to an allocated structure containing the information
  *  about the decoded instruction in amd64.
  */
-rda_int_amd64_t*
-rda_decode_single_amd64(const unsigned char* bytes, size_t size) {
+rda_dec_int_t*
+rda_decode_single64(const unsigned char* bytes, size_t size) {
     // allocate a instruction and then return it.
-    rda_int_amd64_t* result = calloc(1u, sizeof *result);
+    rda_dec_int_t* result = calloc(1u, sizeof *result);
     if (!bytes || size == 0) {
         result->valid = false;
         return result; // we want to fail silently, this is a shared object after all.
@@ -225,10 +228,30 @@ rda_decode_single_amd64(const unsigned char* bytes, size_t size) {
         return result; // only prefixes, no instruction
     }
 
-    // we try the main instruction table,
-    for (size_t i = 0; i < sizeof(internal_m64_table) / sizeof(amd64_int_t); i++) {
+    // try simd instruction table first,
+    rda_context_t ctx = rda_get_context();
+    if (ctx.use_simd) {
+        for (size_t i = 0; i < sizeof(internal_simd_table) / sizeof(rda_int_t); i++) {
+            // iterate through each instruction and see if anything remotely matches.
+            const rda_int_t* inst = &internal_simd_table[i];
+            int length = match_and_calc_length(bytes, size, inst, prefix_length);
+            if (length > 0) {
+                // found a simd match!
+                result->instruction = *inst;
+                result->bytes = bytes;
+                result->length = length;
+                result->prefix_count = prefix_length;
+                result->rex_byte = rex;
+                result->valid = true;
+                return result;
+            }
+        }
+    }
+
+    // we then try the main instruction table.
+    for (size_t i = 0; i < sizeof(internal_table) / sizeof(rda_int_t); i++) {
         // iterate through each instruction and see if anything remotely matches.
-        const amd64_int_t* inst = &internal_m64_table[i];
+        const rda_int_t* inst = &internal_table[i];
         int length = match_and_calc_length(bytes, size, inst, prefix_length);
         if (length > 0) {
             // found a match!
@@ -250,42 +273,42 @@ rda_decode_single_amd64(const unsigned char* bytes, size_t size) {
 };
 
 /**
- * @brief get the instruction type of a decoded instruction.
+ * @brief get the instruction type of decoded instruction.
  *
- * @param inst a decoded instruction from librda.
+ * @param inst a decoded instruction.
  * @return the category/type of the instruction.
  */
-amd64_int_type_t
-rda_get_type(const rda_int_amd64_t* inst) {
-    // this should not happen, but it can.
-    if (!inst) return RDA_ASMX64_INVALID;
+rda_int_ty_t
+rda_get_type(const rda_dec_int_t* inst) {
+    // this should not happen.
+    if (!inst) return RDA_INST_TY_INVALID;
     return inst->instruction.type;
 };
 
 /**
- * @brief disassemble a function in memory at <address>.
+ * @brief disassemble a function in memory at an address.
  *
  * @param address the address in memory to start reading from.
  * @return a pointer to an allocated structure containing the information
  *  about the disassembled function in amd64.
  */
-rda_fun_amd64_t*
-rda_disassemble_amd64(void* address) {
+rda_dec_fun_t*
+rda_disassemble64(void* address) {
     // allocate the structure.
-    rda_fun_amd64_t* function = calloc(1u, sizeof *function);
+    rda_dec_fun_t* function = calloc(1u, sizeof *function);
     function->address = (size_t) address;
-    function->ilist = rda_dynl_create(sizeof(rda_int_amd64_t));
+    function->list = rda_dynl_create(sizeof(rda_dec_int_t));
 
     // we then iterate.
     size_t offset = 0;
     unsigned char* bytes = address;
     while (1) {
         // decode instruction at current offset
-        rda_int_amd64_t* inst = rda_decode_single_amd64(bytes + offset, 15);
+        rda_dec_int_t* inst = rda_decode_single64(bytes + offset, 15);
         if (!inst) break; // decoder failed badly
 
         // add to function instruction list
-        rda_dynl_push(function->ilist, inst);
+        rda_dynl_push(function->list, inst);
 
         // inc offset
         offset += inst->length;
@@ -295,7 +318,7 @@ rda_disassemble_amd64(void* address) {
             break;
 
         // is this a return instruction???
-        if (inst->instruction.type == RDA_ASMX64_CONTROL && \
+        if (inst->instruction.type == RDA_INST_TY_CONTROL && \
             strncmp(inst->instruction.mnemonic, "ret", 3) == 0)
             break;
     }

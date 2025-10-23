@@ -1,6 +1,6 @@
 # compiler and compiler flags
 CC := gcc
-CFLAGS := -g -O0 -std=c17
+CFLAGS := -g -O0 -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wextra -std=c17 -mavx512f -msse2
 CFLAGS += -Iinclude
 
 # derive include directories (-I) from header locations in src/

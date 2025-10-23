@@ -6,6 +6,9 @@
  */
 #include "lib.h"
 
+/// @note static context for librda.
+rda_context_t g_ctx;
+
 /**
  * @brief begin providing context to librda.
  *
@@ -14,17 +17,19 @@
  *	options in rda_context_t).
  */
 void
-rda_begin(rda_context_t *ctx) {
-    if (!ctx) {
-        // set to default values.
-        g_ctx = (rda_context_t) {
-            .verbose = 0,
-        };
-        return;
-    };
+rda_begin(rda_context_t ctx) {
+    // set our global context.
+    g_ctx = ctx;
+};
 
-    // otherwise, set the context.
-    g_ctx = *ctx;
+/**
+ * @brief get the current context used by librda.
+ *
+ * @return the current context used by librda.
+ */
+rda_context_t
+rda_get_context() {
+    return g_ctx;
 };
 
 #pragma region .ctor/dtor
